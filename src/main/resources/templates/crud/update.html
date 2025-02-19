@@ -83,24 +83,24 @@
     </style>
 </head>
 <body>
-  <form action="/update" method="POST">
+  <form action="/products/update" method="POST">
       <h1>Update</h1>
-      <input type="hidden" name="id" th:value="${product.get().getId()}">
+      <input type="hidden" name="id" th:value="${product.getId()}">
       <div>
           <label>Name:</label>
-          <input type="text" name="name" th:value="${product.get().getName()}">
+          <input type="text" name="name" th:value="${product.getName()}">
       </div>
       <div>
           <label>Description:</label>
-          <input type="text" name="description" th:value="${product.get().getDescription()}">
+          <input type="text" name="description" th:value="${product.getDescription()}">
       </div>
       <div>
           <label>Price:</label>
-          <input type="number" name="price" step="0.01" th:value="${product.get().getPrice()}">
+          <input type="number" name="price" step="0.01" th:value="${product.getPrice()}">
       </div>
       <div>
           <label>Stock:</label>
-          <input type="number" name="stock" th:value="${product.get().getStock()}" step="1">
+          <input type="number" name="stock" th:value="${product.getStock()}" step="1">
       </div>
       <button>Update</button>
   </form>

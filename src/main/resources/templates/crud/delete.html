@@ -83,24 +83,24 @@
     </style>
 </head>
 <body>
-    <form action="/delete" method="POST">
+    <form action="/products/delete" method="POST">
         <h1>Are you sure?</h1>
-        <input type="hidden" name="id" th:value="${product.get().getId()}">
+        <input type="hidden" name="id" th:value="${product.getId()}">
         <div>
             <label>Name:</label>
-            <input type="text" th:value="${product.get().getName()}" disabled>
+            <input type="text" th:value="${product.getName()}" disabled>
         </div>
         <div>
             <label>Description:</label>
-            <input type="text" th:value="${product.get().getDescription()}" disabled>
+            <input type="text" th:value="${product.getDescription()}" disabled>
         </div>
         <div>
             <label>Price:</label>
-            <input type="number" step="0.01" th:value="${product.get().getPrice()}" disabled>
+            <input type="number" step="0.01" th:value="${product.getPrice()}" disabled>
         </div>
         <div>
             <label>Stock:</label>
-            <input type="number" th:value="${product.get().getStock()}" step="1" disabled>
+            <input type="number" th:value="${product.getStock()}" step="1" disabled>
         </div>
         <button>Yes, delete!</button>
     </form>

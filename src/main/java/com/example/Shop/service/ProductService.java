@@ -2,13 +2,41 @@ package com.example.Shop.service;
 
 import com.example.Shop.model.Product;
 import com.example.Shop.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class ProductService implements ProductRepository {
+public class ProductService {
+    @Autowired
+    private ProductRepository productRepository;
 
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    public Product getProductById(long id) {
+        return productRepository.getById(id);
+    }
+
+    public List<Product> searchProductByName(String name) {
+        return productRepository.findByNameContaining(name);
+    }
+
+    public Product addProduct(Product product){
+        return productRepository.save(product);
+    }
+
+    public Product updateProduct(Product product){
+        return productRepository.save(product);
+    }
+
+    public void deleteProductById(long id){
+        productRepository.deleteById(id);
+    }
 }
