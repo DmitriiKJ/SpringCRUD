@@ -19,24 +19,23 @@ public class SecurityConfig {
     //
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.csrf(c -> c.disable())
                 // pages which are enable without login
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
                         "/",
                         "/auth/register",
                         "/auth/login",
-                        "/products/read"
+                        "/products/read",
+                        "/api/products"
                 )
                         .permitAll()
-                                // pages which are enable with login
                         .anyRequest()
-                        .authenticated()
-                        )
+                        .authenticated())
                 // custom login
-                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/", true)
+                .formLogin(form -> form.loginPage("/auth/login").defaultSuccessUrl("/", false)
                         .permitAll())
                 // custom logout
-                .logout(form -> form.logoutUrl("/logout").permitAll());
+                .logout(form -> form.logoutUrl("/auth/logout").permitAll());
 
         return http.build();
     }

@@ -1,6 +1,8 @@
 package com.example.Shop.controller;
 
+import com.example.Shop.model.Role;
 import com.example.Shop.model.User;
+import com.example.Shop.repository.RoleRepository;
 import com.example.Shop.repository.UserRepository;
 import com.example.Shop.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
     @Autowired
     private JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
@@ -40,6 +45,14 @@ public class AuthController {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Optional<Role> userRole = roleRepository.findByName("USER");
+        if(userRole.isEmpty()){
+            Role newUserRole = new Role();
+            newUserRole.setName("USER");
+            roleRepository.save(newUserRole);
+            userRole = Optional.of(newUserRole);
+        }
+        user.setRoles(Set.of(userRole.get()));
         userRepository.save(user);
         response.put("success", true);
         return ResponseEntity.ok(response);
