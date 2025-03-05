@@ -7,10 +7,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -38,13 +39,31 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String validateJwtToken(String token){
-        Claims claims = Jwts.parser()
+    public String extractName(String token){
+        return Jwts.parser()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
+                .getBody().getSubject();
+    }
 
-        return claims.get("username", String.class);
+    public boolean validateToken(String token, UserDetails userDetails){
+        final String username = extractName(token);
+        return (userDetails.getUsername().equals(username) && !isTokenExpired(token));
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token){
+        return extractAllClaims(token).getExpiration();
+    }
+
+    private Claims extractAllClaims(String token){
+        return Jwts.parser()
+                .setSigningKey(getSigningKey())
+                .build().parseClaimsJws(token)
+                .getBody();
     }
 }

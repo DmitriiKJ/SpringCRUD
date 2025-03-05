@@ -7,15 +7,21 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @ToString
 @Entity
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -42,7 +48,13 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_ id")
     )
+
     private Set<Role> roles;
+
+    private boolean enabled = true;
+    private boolean accountNonExpired = true;
+    private LocalDateTime accountExpirationDate;
+    private LocalDateTime credentialsExpirationDate;
 
     public User(long id, String username, String password, String email) {
         this.id = id;
@@ -52,4 +64,37 @@ public class User {
     }
 
     public User() {}
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(roles == null || roles.isEmpty())  return Set.of(new SimpleGrantedAuthority("USER"));
+
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        if(accountExpirationDate == null) {
+            return true;
+        }
+        return LocalDateTime.now().isBefore(accountExpirationDate);
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonExpired;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        if(credentialsExpirationDate == null){
+            return true;
+        }
+        return LocalDateTime.now().isBefore(credentialsExpirationDate);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 }
