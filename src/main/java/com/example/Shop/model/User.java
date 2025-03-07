@@ -1,5 +1,6 @@
 package com.example.Shop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -39,6 +40,7 @@ public class User implements UserDetails {
     @NotBlank(message = "Email can't be null")
     private String email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<OrderDemo> orders;
 

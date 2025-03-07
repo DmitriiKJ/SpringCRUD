@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@EnableMethodSecurity
 @Configuration // Позначає клас як конфігураційний компонент Spring Security
 public class SecurityConfig {
     @Autowired
@@ -44,7 +46,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Вимикає CSRF-захист (для REST API зазвичай не потрібен)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll() // Дозволяє доступ без аутентифікації до реєстрації та входу
-                        .requestMatchers("/products/**").hasAnyRole("ADMIN", "MANAGER") // Доступ до продуктів тільки для адміністраторів і менеджерів
+                        .requestMatchers("/products/**").hasAnyAuthority("ADMIN", "MANAGER") // Доступ до продуктів тільки для адміністраторів і менеджерів
                         .anyRequest().authenticated() // Всі інші запити вимагають аутентифікації
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Додає фільтр JWT перед стандартним фільтром аутентифікації

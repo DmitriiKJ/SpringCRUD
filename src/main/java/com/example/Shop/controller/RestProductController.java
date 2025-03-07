@@ -17,13 +17,14 @@ public class RestProductController {
         this.productService = productService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+
+    @PreAuthorize("hasAnyAuthority('USER', 'MANAGER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(){
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product){
         return ResponseEntity.ok(productService.addProduct(product));
