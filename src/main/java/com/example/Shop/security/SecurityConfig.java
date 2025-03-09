@@ -1,6 +1,5 @@
 package com.example.Shop.security;
 
-import com.example.Shop.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,9 +44,15 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Вимикає CSRF-захист (для REST API зазвичай не потрібен)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login").permitAll() // Дозволяє доступ без аутентифікації до реєстрації та входу
+                        .requestMatchers("/auth/register", "/auth/login", "/api/auth/login", "/api/auth/register").permitAll() // Дозволяє доступ без аутентифікації до реєстрації та входу
                         .requestMatchers("/products/**").hasAnyAuthority("ADMIN", "MANAGER") // Доступ до продуктів тільки для адміністраторів і менеджерів
                         .anyRequest().authenticated() // Всі інші запити вимагають аутентифікації
+                )
+                .formLogin(login -> login
+                    .loginPage("/auth/login")
+                    .loginProcessingUrl("/auth/login") // POST-запрос для входа (Spring Security обработает сам)
+                    .defaultSuccessUrl("/products/read", true)
+                        .permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Додає фільтр JWT перед стандартним фільтром аутентифікації
 
