@@ -25,7 +25,7 @@ public class OrderDemo {
     private User user;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderItem> orderItems;
 
     @Column(nullable = false, precision = 10, scale = 2)

@@ -1,6 +1,8 @@
 package com.example.Shop.controller;
 
 import com.example.Shop.model.OrderDemo;
+import com.example.Shop.model.OrderItem;
+import com.example.Shop.model.User;
 import com.example.Shop.repository.OrderDemoRepository;
 import com.example.Shop.repository.OrderItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -77,6 +76,77 @@ public class RestOrderDemoController {
 
         OrderDemo orderDemoSaved = orderDemoRepository.save(orderDemo);
         response.put("order", orderDemoSaved);
+        response.put("status", "success");
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
+    @PostMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> addItemToOrder(@PathVariable long id, @RequestBody OrderItem newItem) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<OrderDemo> orderDemo = orderDemoRepository.findById(id);
+        if(orderDemo.isEmpty()){
+            response.put("status", "error");
+            response.put("message", "Order with this id doesn't exist");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        OrderDemo orderDemoGet = orderDemo.get();
+        if (newItem.getQuantity() <= 0 || newItem.getPrice().compareTo(BigDecimal.ZERO) <= 0){
+            response.put("status", "error");
+            response.put("message", "Incorrect data in order item");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        orderDemoGet.setTotal(orderDemoGet.getTotal().add(newItem.getPrice().multiply(BigDecimal.valueOf(newItem.getQuantity()))));
+
+        newItem.setOrder(orderDemoGet);
+        orderDemoGet.getOrderItems().add(newItem);
+        orderItemRepository.save(newItem);
+        orderDemoRepository.save(orderDemoGet);
+
+        response.put("order", orderDemoGet);
+        response.put("status", "success");
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasAnyAuthority('MANAGER', 'ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> updateOrder(@PathVariable long id, @RequestBody OrderDemo orderDemo){
+        Map<String, Object> response = new HashMap<>();
+        if(orderDemo.getOrderItems() == null || orderDemo.getOrderItems().isEmpty()){
+            response.put("status", "error");
+            response.put("message", "Order must contain at least one item");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        Optional<OrderDemo> oldOrderOpt = orderDemoRepository.findById(id);
+        if(oldOrderOpt.isEmpty()){
+            response.put("status", "error");
+            response.put("message", "Order doesn't exist");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        OrderDemo oldOrder = oldOrderOpt.get();
+
+        BigDecimal totalPrice = orderDemo.getOrderItems().stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        oldOrder.setTotal(totalPrice);
+        oldOrder.getOrderItems().clear();
+        oldOrder.setUser(orderDemo.getUser());
+
+        orderDemo.getOrderItems().stream()
+                .forEach(item -> {
+                    item.setOrder(oldOrder);
+                    orderItemRepository.save(item);
+                    oldOrder.getOrderItems().add(item);
+                });
+
+        OrderDemo savedOrderDemo = orderDemoRepository.save(oldOrder);
+
+        response.put("order", savedOrderDemo);
         response.put("status", "success");
         return ResponseEntity.ok(response);
     }
