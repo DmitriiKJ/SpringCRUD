@@ -39,18 +39,12 @@ public class ProductService {
 
     @Transactional
     public void deleteProductById(Long productId) {
-        System.out.println("1");
-        // Удаляем все связанные записи в order_item
 
         orderItemRepository.deleteOrderItemRelations(productId);
 
         orderItemRepository.deleteByProductId(productId);
-        System.out.println("2");
 
-        // Удаляем сам продукт
         productRepository.deleteById(productId);
-        System.out.println("3");
-
     }
 
     public Product updateProduct(Product product){

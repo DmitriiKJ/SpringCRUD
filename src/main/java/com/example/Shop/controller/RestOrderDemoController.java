@@ -65,12 +65,16 @@ public class RestOrderDemoController {
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        orderDemo.setTotal(totalPrice);
+
+        OrderDemo savedOrderDemo = orderDemoRepository.save(orderDemo);
+
         orderDemo.getOrderItems().stream()
                         .forEach(item -> {
+                            item.setOrder(savedOrderDemo);
                             orderItemRepository.save(item);
                         });
 
-        orderDemo.setTotal(totalPrice);
         OrderDemo orderDemoSaved = orderDemoRepository.save(orderDemo);
         response.put("order", orderDemoSaved);
         response.put("status", "success");
