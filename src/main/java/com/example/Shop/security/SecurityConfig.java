@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Вимикає CSRF-захист (для REST API зазвичай не потрібен)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login", "/api/auth/login", "/api/auth/register").permitAll() // Дозволяє доступ без аутентифікації до реєстрації та входу
-                        .requestMatchers("/products/**").hasAnyAuthority("ADMIN", "MANAGER") // Доступ до продуктів тільки для адміністраторів і менеджерів
+                        .requestMatchers("/products/**", "/orders/**").hasAnyAuthority("ADMIN", "MANAGER") // Доступ до продуктів тільки для адміністраторів і менеджерів
                         .anyRequest().authenticated() // Всі інші запити вимагають аутентифікації
                 )
                 .formLogin(login -> login

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+    }
+    th {
+      background: #007bff;
+      color: white;
+      text-transform: uppercase;
+    }
+    tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    tr:hover {
+      background: #e2e6ea;
+    }
+    td {
+      border-bottom: 1px solid #ddd;
+    }
+    button {
+      border-radius: 5px;
+      min-width: 100px;
+      width: auto;
+      height: 30px;
+      margin: 5px;
+      color: white;
+      border: none;
+      font-size: 18px;
+      padding: 5px;
+    }
+    button:hover {
+      transform: scale(1.1);
+    }
+    .danger {
+      background-color: red;
+    }
+    .info {
+      background-color: #007bff;
+    }
+    .warning {
+      background-color: darkorange;
+    }
+    .accept {
+      background-color: limegreen;
+    }
+  </style>
+</head>
+<body>
+<h1>Details</h1>
+<table border="1">
+  <tr>
+    <th>Id</th>
+    <th>Username</th>
+    <th>Total</th>
+    <th>Update</th>
+    <th>Delete</th>
+  </tr>
+  <tbody>
+  <tr>
+    <td th:text="${order.getId()}"></td>
+    <td th:text="${order.getUser().getUsername()}"></td>
+    <td th:text="${order.getTotal()}"></td>
+    <td>
+      <form action="/orders/update">
+        <input type="hidden" name="id" th:value="${order.getId()}">
+        <button class="warning">Update</button>
+      </form>
+    </td>
+    <td>
+      <form action="/orders/delete">
+        <input type="hidden" name="id" th:value="${order.getId()}">
+        <button class="danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<form action="/orders/delete" method="POST">
+  <input type="hidden" name="id" th:value="${order.getId()}">
+  <button class="danger">Delete</button>
+</form>
+
+</body>
+</html>

@@ -61,42 +61,36 @@
     </style>
 </head>
 <body>
-    <h1>Read</h1>
-    <a href="/orders/read">Go to orders</a>
+<h1>Order items</h1>
     <table border="1">
         <tr>
             <th>Id</th>
-            <th>Name</th>
-            <th>Description</th>
+            <th>Product</th>
+            <th>Quantity</th>
             <th>Price</th>
-            <th>Stock</th>
             <th>Update</th>
             <th>Delete</th>
         </tr>
         <tbody>
-            <tr th:each="product : ${products}">
-                <td th:text="${product.getId()}"></td>
-                <td th:text="${product.getName()}"></td>
-                <td th:text="${product.getDescription()}"></td>
-                <td th:text="${product.getPrice()}"></td>
-                <td th:text="${product.getStock()}"></td>
-                <td>
-                    <form action="/products/update">
-                        <input type="hidden" name="id" th:value="${product.getId()}">
-                        <button class="warning">Update</button>
-                    </form>
-                </td>
-                <td>
-                    <form action="/products/delete">
-                        <input type="hidden" name="id" th:value="${product.getId()}">
-                        <button class="danger">Delete</button>
-                    </form>
-                </td>
-            </tr>
+        <tr th:each="item : ${items}">
+            <td th:text="${item.getId()}"></td>
+            <td th:text="${item.getProduct().getName()}"></td>
+            <td th:text="${item.getQuantity()}"></td>
+            <td th:text="${item.getPrice()}"></td>
+            <td>
+                <form action="/orders/items/update">
+                    <input type="hidden" name="id" th:value="${item.getId()}">
+                    <button class="warning">Update</button>
+                </form>
+            </td>
+            <td>
+                <form action="/orders/items/delete">
+                    <input type="hidden" name="id" th:value="${item.getId()}">
+                    <button class="danger">Delete</button>
+                </form>
+            </td>
+        </tr>
         </tbody>
     </table>
-    <form action="/products/create">
-        <button class="accept">Add new product</button>
-    </form>
 </body>
 </html>

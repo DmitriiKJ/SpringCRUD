@@ -3,10 +3,12 @@ package com.example.Shop.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,9 +28,10 @@ public class OrderDemo {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "order", orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<OrderItem> orderItems;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    @Positive(message = "Price can't be negative or zero")
+    @PositiveOrZero
     private BigDecimal total;
 }

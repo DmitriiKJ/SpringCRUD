@@ -40,7 +40,7 @@ public class ProductService {
     @Transactional
     public void deleteProductById(Long productId) {
 
-        orderItemRepository.deleteOrderItemRelations(productId);
+        //orderItemRepository.deleteOrderItemRelations(productId);
 
         orderItemRepository.deleteByProductId(productId);
 

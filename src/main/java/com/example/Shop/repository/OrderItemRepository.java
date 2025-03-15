@@ -13,7 +13,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     @Query(value = "DELETE FROM order_item WHERE product_id = :id", nativeQuery = true)
     public void deleteByProductId(@Param("id")Long id);
 
-    @Modifying
-    @Query(value = "DELETE FROM order_order_items WHERE order_items_id IN (SELECT id FROM order_item WHERE product_id = :id)", nativeQuery = true)
-    void deleteOrderItemRelations(@Param("id") Long id);
+//    @Modifying
+//    @Query(value = "DELETE FROM order_demo WHERE id IN (SELECT order_id FROM order_item WHERE product_id = :id)", nativeQuery = true)
+//    void deleteOrderItemRelations(@Param("id") Long id);
 }
