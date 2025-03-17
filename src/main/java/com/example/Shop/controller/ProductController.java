@@ -17,11 +17,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping
-    public String index(){
-        return "index";
-    }
-
     // Read
     @GetMapping("/read")
     public String read(Model model){

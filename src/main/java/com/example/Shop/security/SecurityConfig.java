@@ -44,13 +44,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Вимикає CSRF-захист (для REST API зазвичай не потрібен)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login", "/api/auth/login", "/api/auth/register").permitAll() // Дозволяє доступ без аутентифікації до реєстрації та входу
+                        .requestMatchers("/auth/register", "/auth/login", "/api/auth/login", "/api/auth/register", "/").permitAll() // Дозволяє доступ без аутентифікації до реєстрації та входу
+                        .requestMatchers("/products/read").hasAnyAuthority("ADMIN", "MANAGER", "USER")
                         .requestMatchers("/products/**", "/orders/**").hasAnyAuthority("ADMIN", "MANAGER") // Доступ до продуктів тільки для адміністраторів і менеджерів
                         .anyRequest().authenticated() // Всі інші запити вимагають аутентифікації
                 )
                 .formLogin(login -> login
                     .loginPage("/auth/login")
-                    .loginProcessingUrl("/auth/login") // POST-запрос для входа (Spring Security обработает сам)
+                    .loginProcessingUrl("/auth/login") // POST-запрос для входу (Spring Security опрацює сам)
                     .defaultSuccessUrl("/products/read", true)
                         .permitAll()
                 )

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Main Shop</title>
@@ -55,9 +55,11 @@
     </style>
 </head>
 <body>
-    <form action="/products/read">
-        <h1>Hello, Spring!</h1>
+    <form sec:authorize="isAnonymous()">
+        <h1>Home page</h1>
         <button>Go to products</button>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Register</a>
     </form>
 </body>
 </html>
